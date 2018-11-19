@@ -1,5 +1,5 @@
 # COMP5311-GroupProject
-simluate blockchain
+Simluate blockchain
 
 
 Only focusing on the database functionality.
