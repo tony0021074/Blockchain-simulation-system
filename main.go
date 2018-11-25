@@ -6,7 +6,9 @@ import (
 
 func main() {
 
-	nodeID := "ABC"
-	blockchain.SaveNode(nodeID)
+	nodeID1 := "ABC"
+	nodeID2 := "ABDEE"
+	blockchain.SaveNode(nodeID1)
+	blockchain.SaveNode(nodeID2)
 
 }
