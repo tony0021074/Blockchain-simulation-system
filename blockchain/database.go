@@ -19,14 +19,14 @@ const (
 
 // 3 functions are provided to be used for accessing the blockchain database.
 // SaveNode(nodeID string) ---Create a database for the node
-// SaveBlockToNode(nodeID string, block *Block) ---Store a block to the node's database
+// SaveBlockToNode(nodeID string, block *Block) ---Store a block to the node's existing database
 // LoadBlocksFromNode(nodeID string) ---Load all blocks stored in the node's database
 
 func SaveNode(nodeID string) error{
 	nodeDBFilePath := dbPath+nodeID
 	if nodeDBExists(nodeDBFilePath) {
-		err := errors.New("Node DB File Already Exists")
-		print(err.Error())
+		err := errors.New("Node DB file already exists")
+		println(err.Error())
 		return err
 	}
 	db := initDatabase(nodeDBFilePath)
@@ -38,8 +38,8 @@ func SaveBlockToNode(nodeID string, block *Block) error{
 	nodeDBFilePath := dbPath+nodeID
 
 	if ! nodeDBExists(nodeDBFilePath) {
-		err :=errors.New("Node DB file Not Exists")
-		print(err.Error())
+		err :=errors.New("Node DB file not exists")
+		println(err.Error())
 		return err
 	}
 
@@ -54,7 +54,9 @@ func SaveBlockToNode(nodeID string, block *Block) error{
 		err := txn.Set(block.CurrentBlockHash, blockData)
 		return err
 	})
-	handle(err)
+	if err !=nil{
+		println(err.Error())
+	}
 	return err
 }
 
@@ -62,7 +64,7 @@ func LoadBlocksFromNode(nodeID string) ([]*Block, error) {
 	nodeDBFilePath := dbPath+nodeID
 
 	if ! nodeDBExists(nodeDBFilePath) {
-		err :=errors.New("Node DB file Not Exists")
+		err :=errors.New("Node DB file not exists")
 		print(err.Error())
 		return nil, err
 	}
@@ -70,26 +72,31 @@ func LoadBlocksFromNode(nodeID string) ([]*Block, error) {
 	db := initDatabase(nodeDBFilePath)
 	defer db.Close()
 
-	blocks := []*Block{nil}
+	blocks := []*Block{}
 
 	err := db.View(func(txn *badger.Txn) error {
 		opts := badger.DefaultIteratorOptions
 		opts.PrefetchSize = 10
 		it := txn.NewIterator(opts)
+		defer it.Close()
+		if !it.Valid() {
+			return errors.New("Node DB file has no block")
+		}
 		for it.Rewind(); it.Valid(); it.Next() {
 			item := it.Item()
-			_ = item.Key() //Hash
+			_ = item.KeyCopy(nil) //Hash
 			blockData, err := item.ValueCopy(nil)  //BlockData
-			block := deserialize(blockData)
-			blocks = append([]*Block{block}, blocks...)
-			if err!=nil{
+			if err != nil{
 				return err
 			}
+			block := deserialize(blockData)
+			blocks = append([]*Block{block}, blocks...)
 		}
 		return nil
 		})
-	if err!=nil{
-		handle(err)
+	if err != nil{
+		println(err.Error())
+		return nil, err
 	}
 	return blocks, err
 }
@@ -102,7 +109,7 @@ func nodeDBExists(nodeDBFilePath string) bool {
 }
 
 func initDatabase(nodeDBFilePath string) *badger.DB {
-	_, err := os.Stat(nodeDBFilePath) //create path if not exitst
+	_, err := os.Stat(nodeDBFilePath) //create path if not exist
 	if err == nil || os.IsNotExist(err) {
 		os.MkdirAll(nodeDBFilePath, os.ModePerm)
 	}
