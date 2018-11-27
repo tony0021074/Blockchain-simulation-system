@@ -73,13 +73,13 @@ func LoadChain(nodeID string) ([]*Block, error) {
 			handle(err)
 			block := deserialize(blockData)
 			blocks = append([]*Block{block}, blocks...)
-			blocks = sortBlocks(blocks)
 		}
 		return nil
 		})
 	if err != nil{
 		handle(err)
 	}
+	blocks = sortBlocks(blocks)
 	return blocks, err
 }
 
@@ -137,6 +137,7 @@ func openDB(dir string, opts badger.Options) (*badger.DB, error) {
 
 func (b *Block) serialize() []byte {
 	var res bytes.Buffer
+
 	encoder := gob.NewEncoder(&res)
 
 	err := encoder.Encode(b)
