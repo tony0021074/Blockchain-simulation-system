@@ -1,4 +1,4 @@
-# Blockchain simulation system
+# Blockchain simulation system (School group project)
 The application aims to simluate the mechanism of blockchain. It is a group project. I am responsible to the database funtionality. The database.go in folder blockchain is the file written by me. All other files are written by teammates. (This is not the final version)
   
 Be careful of the .go file directory and the package name  
