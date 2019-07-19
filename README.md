@@ -1,9 +1,5 @@
 # COMP5311-GroupProject  
-Simluate blockchain  
-  
-Only database.go is my work. All other files are written by teammates.
-
-The database.go in folder blockchain is the key file in this webpage.  
+The application aims to simluate the mechanism of blockchain. It is a group project. I am responsible to the database funtionality. The database.go in folder blockchain is the file written by me. All other files are written by teammates.
   
 Try the database functionality with all the files uploaded.  
   
