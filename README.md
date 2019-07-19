@@ -10,6 +10,9 @@ LoadChain(nodeID string) ([]*Block, error) ---Load all blocks (ordering depends 
   
   
 update 2018-11-27  
-1.fix bugs of not loading DB data  
-2.reset badger logger  
-3.sort blocks with bubble sort  
+1. Fix bugs of not loading DB data  
+2. Reset badger logger  
+3. Sort blocks with bubble sort  
+
+unsolved error
+1. Sorting blocks by hash has problem
